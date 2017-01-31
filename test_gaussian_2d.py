@@ -1,13 +1,27 @@
 from sped_align import gaussian_2d
-
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def test_gaussian_2d_size():
-    N = 10
-    M = 15
-    X, Y = np.mgrid[0:N, 0:M]
-    G = gaussian_2d((X, Y), 1.0, 5.0, 5.0, 1.0, 1.0, 0.0, 0.0).reshape(np.shape(X))
-    assert len(G[:, 0]) == N
+    n = 10
+    m = 15
+    x, y = np.mgrid[0:n, 0:m]
+    g = gaussian_2d((x, y), 1.0, 5.0, 5.0, 1.0, 1.0, 0.0, 0.0).reshape(np.shape(x))
 
-    assert len(G[0, :]) == M
+    assert len(g[:, 0]) == n
+    assert len(g[0, :]) == m
+
+
+def test_gaussian_2d_center():
+    n = 20
+    m = 20
+    x, y = np.mgrid[0:n, 0:m]
+    for xo in np.linspace(5, 6.5):
+        for yo in np.linspace(5, 6.5):
+            g = gaussian_2d((x, y), 1000.0, xo, yo, 100, 100, 0, 0).reshape(np.shape(x))
+
+            assert np.unravel_index(np.argmax(g), (n, m)) == (
+                int(round(xo, ndigits=0)), int(round(yo, ndigits=0))), print(
+                'AssertionError on testing gaussian 2d center:\n\tmax at: {0} should be at {1}\n{2}'.format(
+                    np.unravel_index(np.argmax(g), (n, m)), (xo, yo), g))
