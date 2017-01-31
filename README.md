@@ -88,6 +88,8 @@
           </li>
         </ul>
       </li>
+    </ul>
+  </li>
 </ul>
 
 <h4><i>test_gaussian_2d.py</i> defines:</h4>
