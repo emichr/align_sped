@@ -1,11 +1,22 @@
 # align_sped
-Python code to align 000 reflection in a SPED stack
+<h1>Python code to align 000 reflection in a <i>Scanning Precession Electron Diffraction</i> (SPED) stack</h1>
 
-Requires hyperspy (hyperspy.api) and scikit image (skimage)
+<h2>Main functionality is in <i>align_sped.py</i> file</h2>
 
-main functionality is in "align_sped.py" file
+<h3>Contains:</h3>
+<ul>
+<li>gaussian_2d()</li>
+</ul>
 
-<h1>"align_sped.py" defines:</h1>
+<h3>Dependencies:</h3>
+<ul>
+<li><i>hyperspy</i> (hyperspy.api)</li>
+<li><i>scikit image</i> (skimage)</li>
+</ul>
+
+
+
+<h4>"align_sped.py" defines:</h4>
 <ul>
   <li><i><b>gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)</b></i>
     <ul>
