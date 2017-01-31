@@ -10,13 +10,9 @@
       <li>gaussian_2d()</li>
     </ul>
   </li>
-  <li>
+  <li>test_gaussian_2d.py
     <ul>
-      <li>test_gaussian_2d.py
-        <ul>
-          <li>test_gaussian_2d_size()</li>
-        </ul>
-      </li>
+      <li>test_gaussian_2d_size()</li>
     </ul>
   </li>
 </ul>
