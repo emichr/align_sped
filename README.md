@@ -7,7 +7,7 @@ main functionality is in "align_sped.py" file
 
 <h1>"align_sped.py" defines:</h1>
 <ul>
-  <li>gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
+  <li><i><b>gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)</b></i>
     <ul>
       <li>Generate twodimensional gaussian distribution with arbitrary rotation.
         <ul>
@@ -26,7 +26,7 @@ main functionality is in "align_sped.py" file
       </li>
       <li>Returns a raveled array containing the intensity of a rotated gaussian distribution
         <ul>
-          <li>Reshape into "correct" shape by calling e. g. "numpy.reshape(np.shape(xdata_tuple[0]))"</li>
+          <li>Reshape into "correct" shape by calling e. g. <i>numpy.reshape(np.shape(xdata_tuple[0]))</i></li>
         </ul>
       </li>
     </ul>
