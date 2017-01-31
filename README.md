@@ -8,6 +8,7 @@
   <li><i>align_sped.py</i>
     <ul>
       <li><i>gaussian_2d()</i></li>
+      <li><i>check_gaussian_2d_inputs()</i></li>
     </ul>
   </li>
   <li><i>test_gaussian_2d.py</i>
@@ -27,7 +28,7 @@
 
 <h4><i>align_sped.py</i> defines:</h4>
 <ul>
-  <li><i><b>gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)</b></i>
+<li><i><b>gaussian_2d(</b>xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset<b>)</b></i>
     <ul>
       <li>Generate twodimensional gaussian distribution with arbitrary rotation.
         <ul>
@@ -50,7 +51,43 @@
         </ul>
       </li>
     </ul>
-  </li>    
+  </li>
+  <li><i><b>check_gaussian_2d_inputs(</b>xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset<b>)</b></i>
+    <ul>
+      <li>
+        Check if inputs can be converted into proper data types:
+        <ul>
+          <li>
+            <i>xdata_tuple</i> is split into its two elements, <i>x_pos</i> and <i>y_pos</i>
+          </li>
+          <li>
+          Parameter to be converted to floats:
+            <ul>
+              <li>
+                 <i>amplitude</i>
+              </li>
+              <li>
+                <i>xo</i>
+              </li>
+              <li>
+                <i>yo</i>
+              </li>
+              <li>
+                <i>sigma_x</i>
+              </li>
+              <li>
+                <i>sigma_y</i>
+              </li>
+              <li>
+                <i>theta</i>
+              </li>
+              <li>
+                <i>offset</i>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
 </ul>
 
 <h4><i>test_gaussian_2d.py</i> defines:</h4>
