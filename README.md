@@ -5,25 +5,24 @@
 
 <h3>Contains:</h3>
 <ul>
-  <li>align_sped.py
+  <li><i>align_sped.py</i>
     <ul>
-      <li>gaussian_2d()</li>
+      <li><i>gaussian_2d()</i></li>
     </ul>
   </li>
-  <li>test_gaussian_2d.py
+  <li><i>test_gaussian_2d.py</i>
     <ul>
-      <li>test_gaussian_2d_size()</li>
+      <li><i>test_gaussian_2d_size()</i></li>
+      <li><i>test_gaussian_2d_centre()</i></li>
     </ul>
   </li>
 </ul>
 
-<h3>Dependencies:</h3>
+<h3>Depends on:</h3>
 <ul>
 <li><i>hyperspy</i> (hyperspy.api)</li>
 <li><i>scikit image</i> (skimage)</li>
 </ul>
-
-
 
 <h4><i>align_sped.py</i> defines:</h4>
 <ul>
@@ -53,3 +52,20 @@
   </li>    
 </ul>
 
+<h4><i>test_gaussian_2d.py</i> defines:</h4>
+<ul>
+  <li><i><b>test_gaussian_2d_size()</b></i>
+    <ul>
+      <li>Tests that the size of the returned gaussian is correct</li>
+    </ul>
+  </li> 
+  <li><i><b>test_gaussian_2d_center()</b></i>
+    <ul>
+      <li>Tests that the centre of the gaussian coincides with the maximum value of the returned array
+        <ul>
+          <li>Requires large <i>sigma_x</i> and <i>sigma_y</i> values</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
