@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import hyperspy.api as hs
 
 
-def twoD_Gaussian(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
+def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
     """
     When xdata_tuple is on the form (X, Y), where X, Y = np.mgrid(0:vertical_width, 0:horizontal_width), the gaussian position is at the column where X = x0 and at the row where Y = y0
     :param xdata_tuple: Tuple on the form (X, Y) where X and Y are nxm matrices. X contains array row (x) coordinates while Y contains column (y) coordinates
@@ -28,43 +28,43 @@ def twoD_Gaussian(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offse
     try:
         (x_pos, y_pos) = xdata_tuple
     except ValueError as e:
-        print('Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(r'twoD_Gaussian()',
+        print('Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(r'gaussian_2d()',
                                                                                                      xdata_tuple, e))
         return None
     try:
         xo = float(xo)
     except ValueError as e:
-        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'twoD_Gaussian()', xo, e))
+        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', xo, e))
         return None
 
     try:
         yo = float(yo)
     except ValueError as e:
-        print('Value error in {}: yo {} is not a valid float\n\t{}'.format(r'twoD_Gaussian()', yo, e))
+        print('Value error in {}: yo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', yo, e))
         return None
 
     try:
         sigma_x = float(sigma_x)
     except ValueError as e:
-        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'twoD_Gaussian()', sigma_x, e))
+        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', sigma_x, e))
         return None
 
     try:
         sigma_y = float(sigma_y)
     except ValueError as e:
-        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'twoD_Gaussian()', sigma_y, e))
+        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', sigma_y, e))
         return None
 
     try:
         offset = float(offset)
     except ValueError as e:
-        print('Value error in {}: offset {} is not a valid float\n\t{}'.format(r'twoD_Gaussian()', offset, e))
+        print('Value error in {}: offset {} is not a valid float\n\t{}'.format(r'gaussian_2d()', offset, e))
         return None
 
     try:
         amplitude = float(amplitude)
     except ValueError as e:
-        print('Value error in {}: amplitude {} is not a valid float\n\t{}'.format(r'twoD_Gaussian()', amplitude, e))
+        print('Value error in {}: amplitude {} is not a valid float\n\t{}'.format(r'gaussian_2d()', amplitude, e))
         return None
 
     try:
@@ -75,6 +75,6 @@ def twoD_Gaussian(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offse
                                            + c * ((y_pos - yo) ** 2)))
         return g.ravel()
     except ValueError as e:
-        print('Value error in {}: Could not compute result, returning None. {}'.format(r'twoD_Gaussian()', e))
+        print('Value error in {}: Could not compute result, returning None. {}'.format(r'gaussian_2d()', e))
         return None
 
