@@ -33,7 +33,7 @@
           <li>This function will be possible to fit to data by calling <i>scipy.optimize.curvefit()</i></li>
         </ul>
       </li>
-      <li>xdata_tuple is tuple with two numpy NxM arrays (made by e.g. <i>numpy.mgrid(np.arange(N), np.arange(M))</i>)</li>
+      <li><i>xdata_tuple</i> is a tuple consisting of two numpy NxM arrays (made by e.g. <i>numpy.mgrid[:N, :M]</i>)</li>
       <li><i>amplitude</i>, <i>xo</i>, <i>yo</i>, <i>sigma_x</i>, <i>sigma_y</i>, <i>theta</i>, and <i>offset</i> will be converted to floats
         <ul>
           <li><i>xo</i> and <i>yo</i> are scalars that defines the centre of the gaussian</li>
