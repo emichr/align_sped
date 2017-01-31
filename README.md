@@ -5,7 +5,7 @@ Requires hyperspy (hyperspy.api) and scikit image (skimage)
 
 main functionality is in "align_sped.py" file
 
-"align_sped.py" defines:
+<h1>"align_sped.py" defines:</h1>
   -gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
     -Generate twodimensional gaussian distribution with arbitrary rotation.
       -This function will be possible to fit to data by calling "scipy.optimize.curvefit()"
