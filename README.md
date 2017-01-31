@@ -14,6 +14,7 @@
     <ul>
       <li><i>test_gaussian_2d_size()</i></li>
       <li><i>test_gaussian_2d_centre()</i></li>
+      <li><i>test_gaussian_2d_fittable()</i></li>
     </ul>
   </li>
 </ul>
