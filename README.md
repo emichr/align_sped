@@ -45,7 +45,7 @@
       </li>
       <li>Returns a raveled array containing the intensity of a rotated gaussian distribution
         <ul>
-          <li>Reshape into "correct" shape by calling e. g. <i>numpy.reshape(np.shape(xdata_tuple[0]))</i></li>
+          <li>Reshape into "correct" shape by calling e. g. <i>gaussian_2d(...).reshape(np.shape(xdata_tuple[0]))</i></li>
         </ul>
       </li>
     </ul>
