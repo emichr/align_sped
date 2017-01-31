@@ -16,7 +16,7 @@
 
 
 
-<h4>"align_sped.py" defines:</h4>
+<h4><i>align_sped.py</i> defines:</h4>
 <ul>
   <li><i><b>gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)</b></i>
     <ul>
