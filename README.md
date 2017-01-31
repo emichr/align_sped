@@ -68,4 +68,9 @@
       </li>
     </ul>
   </li>
+  <li><i><b>test_gaussian_2d_fittable()</b></i>
+    <ul>
+      <li>Tests that the 2D gaussian is fittable using <i>scipy.optimize.curve_fit()</i> method</li>
+    </ul>
+  </li>
 </ul>
