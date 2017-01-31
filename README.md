@@ -88,6 +88,16 @@
           </li>
         </ul>
       </li>
+      <li>
+        Returns a dictionary containing the converted values (<b>NB! might change input parameters if they are mutable objects - need  to be fixed</b>):
+        <ul>
+          <li>
+            {<br>'vertical positions': x_pos,<br> 'horizontal positions': y_pos,<br> 'amplitude': amplitude,<br> 'vertical origin': xo,<br>
+            'horizontal origin': yo,<br> 'vertical sigma': sigma_x,<br> 'horizontal sigma': sigma_y,<br> 'rotation': theta,<br>
+            'offset': offset,<br> 'ok inputs': True<br>}  
+          </li>
+        </ul>
+      </li>
     </ul>
   </li>
 </ul>
