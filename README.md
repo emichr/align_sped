@@ -11,17 +11,17 @@ main functionality is in "align_sped.py" file
     <ul>
       <li>Generate twodimensional gaussian distribution with arbitrary rotation.
         <ul>
-          <li>This function will be possible to fit to data by calling "scipy.optimize.curvefit()"</li>
+          <li>This function will be possible to fit to data by calling <i>scipy.optimize.curvefit()</i></li>
         </ul>
       </li>
-      <li>xdata_tuple is tuple with two numpy NxM arrays (made by e.g. "numpy.mgrid(np.arange(N), np.arange(M))")</li>
-      <li>"amplitude", "xo", "yo", "sigma_x", "sigma_y", "theta", and "offset" will be converted to floats
+      <li>xdata_tuple is tuple with two numpy NxM arrays (made by e.g. <i>numpy.mgrid(np.arange(N), np.arange(M))</i>)</li>
+      <li><i>amplitude</i>, <i>xo</i>, <i>yo</i>, <i>sigma_x</i>, <i>sigma_y</i>, <i>theta</i>, and <i>offset</i> will be converted to floats
         <ul>
-          <li>"xo" and "yo" are scalars that defines the centre of the gaussian</li>
-          <li>"sigma_x" and "sigma_y" are scalars that defines the width of the gaussian</li>
-          <li>"amplitude" is a scalar defining the amplitude of the gaussian</li>
-          <li>"offset" is a scalar defining the base value of the gaussian (baseline)</li>
-          <li>"theta" is a scalar definint the rotation of the gaussian (in degrees)</li>
+          <li><i>xo</i> and <i>yo</i> are scalars that defines the centre of the gaussian</li>
+          <li><i>sigma_x</i> and <i>sigma_y</i> are scalars that defines the width of the gaussian</li>
+          <li><i>amplitude</i> is a scalar defining the amplitude of the gaussian</li>
+          <li><i>offset</i> is a scalar defining the base value of the gaussian (baseline)</li>
+          <li><i>theta</i> is a scalar definint the rotation of the gaussian (in degrees)</li>
           </ul>
       </li>
       <li>Returns a raveled array containing the intensity of a rotated gaussian distribution
