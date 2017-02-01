@@ -3,7 +3,10 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
+import warnings
+
 import hyperspy.api as hs
+from scipy.optimize import curve_fit, OptimizeWarning
 
 
 def check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
@@ -105,4 +108,112 @@ def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
         print('Input to gaussian_2d() did not pass check: {}'.format(checked_inputs))
 
 
+def fit_gaussian_2d_to_imagesubset(image, subset_bounds=(None, None, None, None),
+                                   p0=[None, None, None, None, None, None, None], retryfitting=True, debug=False):
+    (wx, wy) = np.shape(image)
 
+    bounds = [0, wx, 0, wy]
+    for i, bound in enumerate(subset_bounds):
+        if bound is not None:
+            try:
+                bounds[i] = int(bound)
+            except ValueError as e:
+                bounds[i] = bounds[i]
+                if debug:
+                    print(
+                        'Error in fit_gaussian_2d_to_imagesubset():\n\tConverting bound number {} in {} failed - could not convert to integer. Set to default {}\n{}\n'.format(
+                            i, subset_bounds, bounds[i], e))
+        else:
+            if debug:
+                print(
+                    'Warning in fit_gaussian_2d_to_imagesubset():\n\tNo subset bound for bound no {} provided, using default: {}\n'.format(
+                        i, bounds[i]))
+
+    subset = image[bounds[0]:bounds[1] + 1, bounds[2]:bounds[3] + 1].copy()
+    x, y = np.mgrid[bounds[0]:bounds[1] + 1, bounds[2]:bounds[3] + 1]
+
+    try:
+        assert x.min() == bounds[0], 'minimum of "x" ({}) is not equal to "bounds[0]" ({})'.format(x.min(), bounds[0])
+    except AssertionError as e:
+        print(e)
+    try:
+        assert x.max() == bounds[1], 'maximum of "x" ({}) is not equal to "bounds[1]" ({})'.format(x.max(), bounds[1])
+    except AssertionError as e:
+        print(e)
+    try:
+        assert y.min() == bounds[2], 'minimum of "y" ({}) is not equal to "bounds[2]" ({})'.format(y.min(), bounds[2])
+    except AssertionError as e:
+        print(e)
+    try:
+        assert y.max() == bounds[3], 'maximum of "y" ({}) is not equal to "bounds[3]" ({})'.format(x.max(), bounds[3])
+    except AssertionError as e:
+        print(e)
+
+    print(bounds)
+
+    tmp_p0 = [subset.max(), int((bounds[1] - bounds[0]) / 2) + bounds[0], int((bounds[3] - bounds[2]) / 2) + bounds[2],
+              1, 1, 0, 0]
+
+    try:
+        for i, guess in enumerate(p0):
+            if guess is not None:
+                try:
+                    p0[i] = float(guess)
+                except ValueError as e:
+                    p0[i] = tmp_p0[i]
+                    if debug:
+                        print(
+                            'Error in fit_gaussian_2d_to_imagesubset():\n\tCannot convert guess paramater no {} ({})to float, using default {}\n{}\n'.format(
+                                i, guess, p0[i], e))
+            else:
+                p0[i] = tmp_p0[i]
+                if debug:
+                    print(
+                        'Warning in fit_gaussian_2d_to_imagesubset():\n\tNo fit guess no {} provided, using default {}\n'.format(
+                            i, tmp_p0[i]))
+    except TypeError as e:
+        if debug:
+            print(
+                'Error in fit_gaussian_2d_to_imagesubset():\n\tCannot treat input parameter guesses\n\t\t{}\n\tusing defaults\n\t\t{}\n{}\n'.format(
+                    p0, tmp_p0, e))
+
+    try:
+        warnings.simplefilter("error", OptimizeWarning)
+        popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(),
+                               p0=p0, bounds=([0, 0, 0, 0, 0, -45, 0], [np.inf, wx, wy, wx, wy, 45, np.inf]))
+    except OptimizeWarning as e:
+        if retryfitting:
+            if debug:
+                print(
+                    'Warning in fig_gaussian_2d_to_imagesubset():\n{}\n\tTrying automated default guess {}\n'.format(e,
+                                                                                                                     tmp_p0))
+            p0 = tmp_p0
+            if debug:
+                warnings.simplefilter("default", OptimizeWarning)
+            else:
+                warnings.simplefilter("ignore", OptimizeWarning)
+            popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(),
+                                   p0=p0, bounds=([0, 0, 0, 0, 0, -45, 0], [np.inf, wx, wy, wx, wy, 45, np.inf]))
+
+        else:
+            if debug:
+                warnings.simplefilter("default", OptimizeWarning)
+            else:
+                warnings.simplefilter("ignore", OptimizeWarning)
+            popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(),
+                                   p0=p0, bounds=([0, 0, 0, 0, 0, -45, 0], [np.inf, wx, wy, wx, wy, 45, np.inf]))
+
+    if np.any(pcov == np.inf):
+        if debug:
+            print('\tFit using guess: {} failed (retryfitting {}.'.format(p0, retryfitting))
+        perr = [np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]
+    else:
+        perr = np.sqrt(np.diag(pcov))
+    return {'parameters': popt, 'parameter uncertainties': perr, 'x': x, 'y': y,
+            'bounds': [bounds[0], bounds[1], bounds[2], bounds[3]], 'x min': bounds[0], 'x max': bounds[1],
+            'y min': bounds[2], 'y max': bounds[3], 'extent': (bounds[2] - 0.5, bounds[3] + 0.5, bounds[1] + 0.5,
+                                                               bounds[0] - 0.5)}
+
+def add_countour(x, y, z, axis, number_of_contours):
+    axis.contour(y, x, z, number_of_contours)
+    return axis
