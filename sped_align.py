@@ -214,6 +214,7 @@ def fit_gaussian_2d_to_imagesubset(image, subset_bounds=(None, None, None, None)
             'y min': bounds[2], 'y max': bounds[3], 'extent': (bounds[2] - 0.5, bounds[3] + 0.5, bounds[1] + 0.5,
                                                                bounds[0] - 0.5)}
 
-def add_countour(x, y, z, axis, number_of_contours):
+
+def add_contour(x, y, z, axis, number_of_contours=3):
     axis.contour(y, x, z, number_of_contours)
     return axis
