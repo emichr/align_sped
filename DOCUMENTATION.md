@@ -1,4 +1,4 @@
-#Documentation
+#`align_sped` Documentation
 ##`align_sped.py`
 
 ### `gaussian_2d`
