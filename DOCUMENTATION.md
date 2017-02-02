@@ -4,12 +4,15 @@
 ### `gaussian_2d`
 __gaussian_2d(__ _xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset_ __)__
 
-Compute the twodimensional gaussian according to: 
-<br><img src="gauss.png" alt="Gauss"/><br>
-where the coordinates are defined as<br>
-<img src="transformation.png" alt="Substitution"/><br>
-and rotated according to<br>
-<img src="rotation.png" alt="Rotation"/><br>
+Compute the twodimensional gaussian according to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="gauss.png" alt="Gauss"/><br>
+where the coordinates are rotated relative to original coordinates by the transformation: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="rotation.png" alt="Rotation"/>.<br>
+The original coordinates are expressed as:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="transformation.png" alt="Substitution"/><br>
+
+This ensures that both the center and the width of the gaussian is "rotated".
+
 
 It has an amplitude _amplitude_ centered on (_xo_, _yo_) with widths _sigma\_x_ and _sigma\_y_. The gaussian may rotate _theta_ degrees about the horisontal axis and have a baseline of _offset_.
 
