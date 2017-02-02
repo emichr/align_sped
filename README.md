@@ -27,7 +27,8 @@ See the <a href="https://github.com/EmilChristiansenNTNU/align_sped/blob/README-
   * `test_gaussian_2d.py` for unit testing input and output of 2D gaussian function
 
 ## Tasks
-- [ ] Implement fitting function and documentation
+- [ ] Finish fitting function
 - [ ] Implement more and better unit testing gases and functions
+- [ ] Provide documentation on all tools
 
 ## Issues
