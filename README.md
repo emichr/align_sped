@@ -24,7 +24,7 @@ In some cases, either due to misalignments, sample thickness or geometry, the di
   * `test_gaussian_2d.py` for unit testing input and output of 2D gaussian function
   
 ## Tasks
-- [] Implement fitting function and documentation
-- [] Implement more and better unit testing gases and functions
+- [ ] Implement fitting function and documentation
+- [ ] Implement more and better unit testing gases and functions
 
 ## Issues
