@@ -110,6 +110,33 @@ def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
 
 def fit_gaussian_2d_to_imagesubset(image, subset_bounds=(None, None, None, None),
                                    p0=[None, None, None, None, None, None, None], retryfitting=True, debug=False):
+    '''Fit a twodimensional gaussian to subset of image.
+
+    Provide a twodimensional array and a region on which to fit a twodimensional gaussian. The gaussian has two
+    independent, perpendicular, widths, and is rotated by conventional rotation transform.
+
+    Parameters
+    ----------
+    image : array_like
+    subset_bounds : 4-tuple of int or float, optional
+        (the default is (None, None, None, None) which implies fitting on the whole image).
+    p0 : 7-list of int or float, optional
+        Initial guess provided to `scipy.optimize.curvefit()` (the default is [None, None, None, None, None, None, None]
+        which implies using details of the image subset as a guess: [maximum, width_x, width_y, 1, 1, 0, 0]).
+    retryfitting : bool, optional
+        If fitting using the provided initial guess `p0` failes, retry the fitting using the default values of `p0`
+        (the default is True).
+    debug : bool, optional
+        Provide print statements as output on **some** errors, warnings or issues.
+
+    Returns
+    -------
+    dict
+        Dictionary containing results from the fitting, as well as row and column position arrays, the bounds used for
+        the subset, and an extent for use with `matplotlib.pyplot.imshow`. The keys are `parameters`,
+        `parameter uncertainties`, `x`, `y`, `bounds`, `x min`, `x max`, `y min`, `y max`, `extent`.
+
+    '''
     (wx, wy) = np.shape(image)
 
     bounds = [0, wx, 0, wy]
