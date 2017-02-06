@@ -4,40 +4,30 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sped_align as sa
 
-N = 50
-M = 70
 
-Xo = 20
-Yo = 40
+if __name__ == '__main__':
+    N, M = 256, 256  # Define width of image
+    X, Y = np.mgrid[:256, :256]  # Represent image pixels by two NxM arrays
+    A, Vo, Ho, Vw, Hw, Rot, C = 254, 100, 180, 4, 8, 15, 0  # Define gaussian parameters amplitude, vertical origin, horizontal origin, vertical width, horizontal width, rotation and baseline, respectively.
+    G = sa.gaussian_2d((X, Y), 254, 100, 180, 4, 8, 15, 0).reshape(np.shape(X))  # Compute twodimensional gaussian
+    fitresult = sa.fit_gaussian_2d_to_imagesubset(G, subset_bounds=(50, 150, 100, 200), p0=[A, Vo, Ho, Vw, Hw, Rot, C])
 
-Sx = 3
-Sy = 6
+    print(fitresult['parameters'])
 
-Rot = 27
+    g_1 = sa.gaussian_2d((X, Y), *fitresult['parameters']).reshape(np.shape(X))
 
-C = 10
+    g_2 = sa.gaussian_2d((fitresult['x'], fitresult['y']), *fitresult['parameters']).reshape(np.shape(fitresult['x']))
+    fig, axes = plt.subplots(1, 2)
+    axes[0].imshow(G, interpolation='nearest', cmap=plt.get_cmap('RdBu'))
+    sa.add_contour(X, Y, g_1, axes[0])
 
-X, Y = np.mgrid[:N, :M]
-test_data = sa.gaussian_2d((X, Y), 100.0, Xo, Yo, Sx, Sy, Rot, C).reshape(np.shape(X)) \
-    #         + sa.gaussian_2d((X, Y), 100.0,
-    #                                                                                                     Xo + 3, Yo + 3,
-    #                                                                                                     2, 3, -Rot,
-    #                                                                                                     C).reshape(
-    # np.shape(X))
+    axes[1].imshow(
+        G[fitresult['x min']:fitresult['x max'] + 1, fitresult['y min']:fitresult['y max'] + 1],
+        interpolation='nearest', cmap=plt.get_cmap('RdBu'),
+        extent=fitresult['extent'])
 
-fit_result = sa.fit_gaussian_2d_to_imagesubset(test_data, subset_bounds=(5, 35, 20, 60))
+    sa.add_contour(fitresult['x'], fitresult['y'], g_2, axes[1])
+    plt.show()
 
-g_1 = sa.gaussian_2d((X, Y), *fit_result['parameters']).reshape(np.shape(X))
-g_2 = sa.gaussian_2d((fit_result['x'], fit_result['y']), *fit_result['parameters']).reshape(np.shape(fit_result['x']))
 
-fig, axes = plt.subplots(1, 2)
-axes[0].imshow(test_data, interpolation='nearest', cmap=plt.get_cmap('RdBu'))
-sa.add_contour(X, Y, g_1, axes[0])
 
-axes[1].imshow(
-    test_data[fit_result['x min']:fit_result['x max'] + 1, fit_result['y min']:fit_result['y max'] + 1],
-    interpolation='nearest', cmap=plt.get_cmap('RdBu'),
-    extent=fit_result['extent'])
-
-sa.add_contour(fit_result['x'], fit_result['y'], g_2, axes[1])
-plt.show()

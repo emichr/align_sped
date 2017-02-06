@@ -10,71 +10,254 @@ from scipy.optimize import curve_fit, OptimizeWarning
 
 
 def check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
+    """Check that the inputs can be converted to proper types
+
+    This function checks that the input parameters to `gaussian_2d()` can be converted to correct types,
+    without exiting the code.
+
+    Parameters
+    ----------
+    xdata_tuple : 2-tuple
+        Tuple containing row and column arrays as its element. The elements should be NxM numpy arrays where the first
+        array contain the row indices, i.e. a_ij=i, and the second array contain the column indices, i.e. a_ij=j.
+    amplitude : int, string or float
+        The amplitude of the gaussian.
+    xo : int, float or string
+        The row position of the gaussian.
+    yo : int, float or string
+        The column position of the gaussian.
+    sigma_x : int, float or string
+        The width of the gaussian, in the row direction.
+    sigma_y : int, float or string
+        The width of the gaussian, in the column direction.
+    theta : int, float or string
+        The rotation of the gaussian, measured clockwise in degrees.
+    offset : int, float or string
+        The offset (or baseline) of the gaussian.
+
+    Returns
+    -------
+    dict
+        Dictionary containing the converted arguments.
+    vertical positions : dict key (string)
+        Value contains the row array.
+    horizontal positions : dict key (string)
+        Value contains the column array.
+    amplitude : dict key (string)
+        Value contains the amplitude as float.
+    vertical origin : dict key (string)
+        Value contains the horizontal origin of the gaussian as a float.
+    horizontal origin : dict key (string)
+        Value contains the vertical origin of the gaussian as a float.
+    vertical sigma : dict key (string)
+        Value contains the width of the gaussian in the vertical direction (row) as a float.
+    horizontal sigma : dict key (string)
+        Value contains the width of the gaussian in the horizontal direction (column) as a float.
+    rotation : dict key (string)
+        Value contains the angle that the gaussian is rotated with as a float.
+    offset : dict key (string)
+        Value contains the offset (baseline) of the gaussian as a float.
+    ok inputs : dict key (string)
+        Value contains True of False. If all values were converted successfully, returns as True, otherwise returns
+        False.
+
+    Raises
+    ------
+
+    Notes
+    -----
+
+    Examples
+    --------
+
+    Create two valid row/column arrays of shape (N, M) and provide valid inputs.
+
+    >>> X, Y = numpy.mgrid[:N, :M]
+    >>> check = check_gaussian_2d_inputs((X, Y), 100, '20', 37, '0.1', 5, 20.0, -10.1)
+    >>> check['vertical positions']
+    X
+    >>> check['horizontal positions']
+    Y
+    >>> check['amplitude']
+    100.0
+    >>> check['vertical origin']
+    20.0
+    >>> check['horizontal origin']
+    37.0
+    >>> check['vertical sigma']
+    0.1
+    >>> check['horizontal sigma']
+    5.0
+    >>> check['rotation']
+    20.0
+    >>> check['offset']
+    -10.1
+    >>> check['ok inputs']
+    True
+
+    Provide the function with invalid parameters:
+
+    >>> X, Y = numpy.mgrid[:N, :M]
+    >>> check = check_gaussian_2d_inputs(90, 'one hundred', '20a', 'invalid', '0,1', 'ajk2', 'invalid', 'weee')
+    Value error in gaussian_2d():
+    could not convert theta invalid to float: can't multiply sequence by non-int of type 'float'
+    Value error in gaussian_2d(): could not extract x_pos and y_pos from x_data tuple 90: 'int' object is not iterable
+    Value error in gaussian_2d(): xo 20a is not a valid float
+    could not convert string to float: '20a'
+    Value error in gaussian_2d(): yo invalid is not a valid float
+    could not convert string to float: 'invalid'
+    Value error in gaussian_2d(): xo 0,1 is not a valid float
+    could not convert string to float: '0,1'
+    Value error in gaussian_2d(): xo ajk2 is not a valid float
+    could not convert string to float: 'ajk2'
+    Value error in gaussian_2d(): offset weee is not a valid float
+    could not convert string to float: 'weee'
+    Value error in gaussian_2d(): amplitude one hundred is not a valid float
+    could not convert string to float: 'one hundred'
+    >>> check['vertical positions']
+    None
+    >>> check['horizontal positions']
+    None
+    >>> check['amplitude']
+    None
+    >>> check['vertical origin']
+    None
+    >>> check['horizontal origin']
+    None
+    >>> check['vertical sigma']
+    None
+    >>> check['horizontal sigma']
+    None
+    >>> check['rotation']
+    None
+    >>> check['offset']
+    None
+    >>> check['ok inputs']
+    False
+
+    """
+
+    result = {'vertical positions': None, 'horizontal positions': None, 'amplitude': None, 'vertical origin': None,
+              'horizontal origin': None, 'vertical sigma': None, 'horizontal sigma': None, 'rotation': None,
+              'offset': None, 'ok inputs': None}
     try:
         theta = float(theta * np.pi / 180.0)
+        result['rotation'] = theta
     except ValueError as e:
-        print('Value error in {}:\n\tcould not convert theta {} to float: {}'.format(theta, e))
-        return {'ok inputs': False}
-
+        print('Value error in {}:\n\tcould not convert theta {} to float: {}'.format(r'gaussian_2d()', theta, e))
+        result['ok inputs'] = False
+    except TypeError as e:
+        print('Value error in {}:\n\tcould not convert theta {} to float: {}'.format(r'gaussian_2d()', theta, e))
+        result['ok inputs'] = False
     try:
         (x_pos, y_pos) = xdata_tuple
+        result['vertical positions'] = x_pos
+        result['horizontal positions'] = y_pos
     except ValueError as e:
         print('Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(r'gaussian_2d()',
                                                                                                      xdata_tuple, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
+    except TypeError as e:
+        print('Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(r'gaussian_2d()',
+                                                                                                     xdata_tuple, e))
+        result['ok inputs'] = False
     try:
         xo = float(xo)
+        result['vertical origin'] = xo
     except ValueError as e:
         print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', xo, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
 
     try:
         yo = float(yo)
+        result['horizontal origin'] = yo
     except ValueError as e:
         print('Value error in {}: yo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', yo, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
 
     try:
         sigma_x = float(sigma_x)
+        result['vertical sigma'] = sigma_x
     except ValueError as e:
         print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', sigma_x, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
 
     try:
         sigma_y = float(sigma_y)
+        result['horizontal sigma'] = sigma_y
     except ValueError as e:
         print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', sigma_y, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
 
     try:
         offset = float(offset)
+        result['offset'] = offset
     except ValueError as e:
         print('Value error in {}: offset {} is not a valid float\n\t{}'.format(r'gaussian_2d()', offset, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
 
     try:
         amplitude = float(amplitude)
+        result['amplitude'] = amplitude
     except ValueError as e:
         print('Value error in {}: amplitude {} is not a valid float\n\t{}'.format(r'gaussian_2d()', amplitude, e))
-        return {'ok inputs': False}
+        result['ok inputs'] = False
 
-    return {'vertical positions': x_pos, 'horizontal positions': y_pos, 'amplitude': amplitude, 'vertical origin': xo,
-            'horizontal origin': yo, 'vertical sigma': sigma_x, 'horizontal sigma': sigma_y, 'rotation': theta,
-            'offset': offset, 'ok inputs': True}
+    if result['ok inputs'] is None:
+        result['ok inputs'] = True
+
+    return result
 
 
 def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
-    """
-    When xdata_tuple is on the form (X, Y), where X, Y = np.mgrid(0:vertical_width, 0:horizontal_width), the gaussian position is at the column where X = x0 and at the row where Y = y0
-    :param xdata_tuple: Tuple on the form (X, Y) where X and Y are nxm matrices. X contains array row (x) coordinates while Y contains column (y) coordinates
-    :param amplitude: Amplitude factor of gaussian
-    :param xo: row position of gaussian (where X = x0)
-    :param yo: column position of gaussian (where Y = y0)
-    :param sigma_x: Width of gaussian in row direction (x)
-    :param sigma_y: Width of gaussian in column direction (y)
-    :param theta: rotation of gaussian, measured clockwise from horizontal, in degrees
-    :param offset: Constant offset (baseline) of gaussian
-    :return: A raveled numpy array containin Z values of gaussian. To get on 2d array form call .reshape(np.shape(X)) on output
+    """Compute two dimensional gaussian with arbitrary rotation.
+
+    Calculates a twodimensional gaussian with two independent widths and arbitrarily rotated by the standard rotation
+    transformation. The input parameters will be converted to floats, except for the position arrays.
+
+    Parameters
+    ----------
+    xdata_tuple : 2-tuple
+        Tuple containing row and column arrays as its element. The elements should be NxM numpy arrays where the first
+        array contain the row indices, i.e. a_ij=i, and the second array contain the column indices, i.e. a_ij=j.
+    amplitude : int, string or float
+        The amplitude of the gaussian.
+    xo : int, float or string
+        The row position of the gaussian.
+    yo : int, float or string
+        The column position of the gaussian.
+    sigma_x : int, float or string
+        The width of the gaussian, in the row direction.
+    sigma_y : int, float or string
+        The width of the gaussian, in the column direction.
+    theta : int, float or string
+        The rotation of the gaussian, measured clockwise in degrees.
+    offset : int, float or string
+        The offset (or baseline) of the gaussian.
+
+    Returns
+    -------
+    numpy 1d array
+        The raveled array of length N*M containing the amplitude of the gaussian. Reshape into array format by calling
+        `.reshape(numpy.shape(x_tuple[0]))` on the 1d array.
+
+    Raises
+    ------
+
+
+    Notes
+    -----
+
+
+    Examples
+    --------
+    >>> X, Y = numpy.mgrid[:N, :M]
+    >>> gaussian = gaussian_2d((X, Y), 100, N/2, M/2, N/100, M/100, 20, 30)
+    >>> gaussian = gaussian.reshape(numpy.shape(X))
+    >>> fig, ax = matplotlib.pyplot.figure()
+    >>> ax.imshow(gaussian, interpolation='nearest')
+    >>> matplotlib.pyplot.show()
+
     """
 
     checked_inputs = check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
@@ -110,7 +293,7 @@ def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
 
 def fit_gaussian_2d_to_imagesubset(image, subset_bounds=(None, None, None, None),
                                    p0=[None, None, None, None, None, None, None], retryfitting=True, debug=False):
-    '''Fit a twodimensional gaussian to subset of image.
+    """Fit a twodimensional gaussian to part of image.
 
     Provide a twodimensional array and a region on which to fit a twodimensional gaussian. The gaussian has two
     independent, perpendicular, widths, and is rotated by conventional rotation transform.
@@ -136,7 +319,32 @@ def fit_gaussian_2d_to_imagesubset(image, subset_bounds=(None, None, None, None)
         the subset, and an extent for use with `matplotlib.pyplot.imshow`. The keys are `parameters`,
         `parameter uncertainties`, `x`, `y`, `bounds`, `x min`, `x max`, `y min`, `y max`, `extent`.
 
-    '''
+    Raises
+    ------
+
+    Notes
+    -----
+
+    Examples
+    --------
+
+    Make a sample image and fit a gaussian to it on a small part. Plot the images side by side at the end, with countours.
+
+    >>> N, M = 256, 256 #Define width of image
+    >>> X, Y = numpy.mgrid[:256, :256] #Represent image pixels by two NxM arrays
+    >>> A, Vo, Ho, Vw, Hw, Rot, C = 254, 100, 180, 4, 8, 15, 0 #Define gaussian parameters amplitude, vertical origin, horizontal origin, vertical width, horizontal width, rotation and baseline, respectively.
+    >>> G = gaussian_2d((X, Y), 254, 100, 180, 4, 8, 15, 0).reshape(numpy.shape(X)) #Compute twodimensional gaussian
+    >>> fitresult = fit_gaussian_2d_to_imagesubset(G, subset_bounds=(50, 150, 100, 200)) #Fit a gaussian to a part of the image
+    >>> g_1 = sa.gaussian_2d((X, Y), *fitresult['parameters']).reshape(np.shape(X))
+    >>> g_2 = sa.gaussian_2d((fitresult['x'], fitresult['y']), *fitresult['parameters']).reshape(np.shape(fitresult['x']))
+    >>> fig, axes = matplotlib.pyplot..subplots(1, 2) #Create figure and axes
+    >>> axes[0].imshow(G, interpolation='nearest', cmap=plt.get_cmap('RdBu')) #show original image
+    >>> axes[1].imshow(G[fitresult['x min']:fitresult['x max'] + 1, fitresult['y min']:fitresult['y max'] + 1], interpolation='nearest', cmap=plt.get_cmap('RdBu'), extent=fitresult['extent']) #Show the part of image where the gaussian was fitted
+    >>> add_contour(X, Y, g_1, axes[0])
+    >>> add_contour(fitresult['x'], fitresult['y'], g_2, axes[1])
+    >>> matplotlib.pyplot.show() #Show the images
+
+    """
     (wx, wy) = np.shape(image)
 
     bounds = [0, wx, 0, wy]
