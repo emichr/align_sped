@@ -11,18 +11,31 @@ if __name__ == '__main__':
 
     print(type(s))
     print(s.original_metadata)
+    lim = 1800-1
 
-    align_parameters = sa.align_stack(s, limit=400, print_frameno=True, debug=False, subset_bounds=10)
-    print(align_parameters['Popt'])
-    x_shift = align_parameters['Popt'][:, :, 1]
-    y_shift = align_parameters['Popt'][:, :, 2]
+    Popts_1, Popts_2 = sa.align_stack_fast(s, limit=None, bounds=10, save=True)
 
-    print(x_shift)
-    print(np.shape(x_shift))
+
+    x_shift_1 = Popts_1[:lim+1, 1]
+    y_shift_1 = Popts_1[:lim+1, 2]
+    #
+    x_shift_2 = Popts_2[:, :,  1]
+    y_shift_2 = Popts_2[:, :,  2]
+
+    # align_parameters = sa.align_stack_fast(s, limit=400, print_frameno=True, debug=False, subset_bounds=10)
+    # print(align_parameters['Popt'])
+    # x_shift = align_parameters['Popt'][:, :, 1]
+    # y_shift = align_parameters['Popt'][:, :, 2]
+
+    f, ax = plt.subplots(1, 1)
+    ax.plot(x_shift_1, 'r')
+    ax.plot(y_shift_1, 'b')
 
     f, ax = plt.subplots(1, 2)
-    ax[0].imshow(x_shift, interpolation='nearest')
-    ax[1].imshow(y_shift, interpolation='nearest')
+    ax[0].imshow(x_shift_2, interpolation='nearest', cmap=plt.get_cmap('RdBu'))
+    ax[1].imshow(y_shift_2, interpolation='nearest', cmap=plt.get_cmap('RdBu'))
+    #ax[0].imshow(x_shift, interpolation='nearest')
+    #ax[1].imshow(y_shift, interpolation='nearest')
 
     plt.show()
 
