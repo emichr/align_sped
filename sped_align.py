@@ -9,7 +9,9 @@ import hyperspy.api as hs
 from scipy.optimize import curve_fit, OptimizeWarning
 
 
-def check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
+def check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo,
+                             sigma_x, sigma_y, theta,
+                             offset):
     """Check that the inputs can be converted to proper types
 
     This function checks that the input parameters to `gaussian_2d()` can be converted to correct types,
@@ -137,70 +139,94 @@ def check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, t
 
     """
 
-    result = {'vertical positions': None, 'horizontal positions': None, 'amplitude': None, 'vertical origin': None,
-              'horizontal origin': None, 'vertical sigma': None, 'horizontal sigma': None, 'rotation': None,
+    result = {'vertical positions': None,
+              'horizontal positions': None,
+              'amplitude': None, 'vertical origin': None,
+              'horizontal origin': None,
+              'vertical sigma': None,
+              'horizontal sigma': None, 'rotation': None,
               'offset': None, 'ok inputs': None}
     try:
         theta = float(theta * np.pi / 180.0)
         result['rotation'] = theta
     except ValueError as e:
-        print('Value error in {}:\n\tcould not convert theta {} to float: {}'.format(r'gaussian_2d()', theta, e))
+        print(
+            'Value error in {}:\n\tcould not convert theta {} to float: {}'.format(
+                r'gaussian_2d()', theta, e))
         result['ok inputs'] = False
     except TypeError as e:
-        print('Value error in {}:\n\tcould not convert theta {} to float: {}'.format(r'gaussian_2d()', theta, e))
+        print(
+            'Value error in {}:\n\tcould not convert theta {} to float: {}'.format(
+                r'gaussian_2d()', theta, e))
         result['ok inputs'] = False
     try:
         (x_pos, y_pos) = xdata_tuple
         result['vertical positions'] = x_pos
         result['horizontal positions'] = y_pos
     except ValueError as e:
-        print('Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(r'gaussian_2d()',
-                                                                                                     xdata_tuple, e))
+        print(
+            'Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(
+                r'gaussian_2d()',
+                xdata_tuple, e))
         result['ok inputs'] = False
     except TypeError as e:
-        print('Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(r'gaussian_2d()',
-                                                                                                     xdata_tuple, e))
+        print(
+            'Value error in {}: could not extract x_pos and y_pos from x_data tuple {}: {}'.format(
+                r'gaussian_2d()',
+                xdata_tuple, e))
         result['ok inputs'] = False
     try:
         xo = float(xo)
         result['vertical origin'] = xo
     except ValueError as e:
-        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', xo, e))
+        print(
+            'Value error in {}: xo {} is not a valid float\n\t{}'.format(
+                r'gaussian_2d()', xo, e))
         result['ok inputs'] = False
 
     try:
         yo = float(yo)
         result['horizontal origin'] = yo
     except ValueError as e:
-        print('Value error in {}: yo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', yo, e))
+        print(
+            'Value error in {}: yo {} is not a valid float\n\t{}'.format(
+                r'gaussian_2d()', yo, e))
         result['ok inputs'] = False
 
     try:
         sigma_x = float(sigma_x)
         result['vertical sigma'] = sigma_x
     except ValueError as e:
-        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', sigma_x, e))
+        print(
+            'Value error in {}: xo {} is not a valid float\n\t{}'.format(
+                r'gaussian_2d()', sigma_x, e))
         result['ok inputs'] = False
 
     try:
         sigma_y = float(sigma_y)
         result['horizontal sigma'] = sigma_y
     except ValueError as e:
-        print('Value error in {}: xo {} is not a valid float\n\t{}'.format(r'gaussian_2d()', sigma_y, e))
+        print(
+            'Value error in {}: xo {} is not a valid float\n\t{}'.format(
+                r'gaussian_2d()', sigma_y, e))
         result['ok inputs'] = False
 
     try:
         offset = float(offset)
         result['offset'] = offset
     except ValueError as e:
-        print('Value error in {}: offset {} is not a valid float\n\t{}'.format(r'gaussian_2d()', offset, e))
+        print(
+            'Value error in {}: offset {} is not a valid float\n\t{}'.format(
+                r'gaussian_2d()', offset, e))
         result['ok inputs'] = False
 
     try:
         amplitude = float(amplitude)
         result['amplitude'] = amplitude
     except ValueError as e:
-        print('Value error in {}: amplitude {} is not a valid float\n\t{}'.format(r'gaussian_2d()', amplitude, e))
+        print(
+            'Value error in {}: amplitude {} is not a valid float\n\t{}'.format(
+                r'gaussian_2d()', amplitude, e))
         result['ok inputs'] = False
 
     if result['ok inputs'] is None:
@@ -209,17 +235,24 @@ def check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, t
     return result
 
 
-def gaussian_2d_fast(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
+def gaussian_2d_fast(xdata_tuple, amplitude, xo, yo,
+                     sigma_x, sigma_y, theta, offset):
     (x_pos, y_pos) = xdata_tuple
-    a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (2 * sigma_y ** 2)
-    b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(2 * theta)) / (4 * sigma_y ** 2)
-    c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (2 * sigma_y ** 2)
-    g = offset + amplitude * np.exp(- (a * ((x_pos - xo) ** 2) + 2 * b * (x_pos - xo) * (y_pos - yo)
-                                       + c * ((y_pos - yo) ** 2)))
+    a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(
+        theta) ** 2) / (2 * sigma_y ** 2)
+    b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(
+        2 * theta)) / (4 * sigma_y ** 2)
+    c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(
+        theta) ** 2) / (2 * sigma_y ** 2)
+    g = offset + amplitude * np.exp(- (
+        a * ((x_pos - xo) ** 2) + 2 * b * (x_pos - xo) * (
+            y_pos - yo)
+        + c * ((y_pos - yo) ** 2)))
     return g.ravel()
 
 
-def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset):
+def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x,
+                sigma_y, theta, offset):
     """Compute two dimensional gaussian with arbitrary rotation.
 
     Calculates a twodimensional gaussian with two independent widths and arbitrarily rotated by the standard rotation
@@ -270,7 +303,11 @@ def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
 
     """
 
-    checked_inputs = check_gaussian_2d_inputs(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
+    checked_inputs = check_gaussian_2d_inputs(xdata_tuple,
+                                              amplitude, xo,
+                                              yo, sigma_x,
+                                              sigma_y,
+                                              theta, offset)
     try:
         assert checked_inputs['ok inputs']
         try:
@@ -284,24 +321,36 @@ def gaussian_2d(xdata_tuple, amplitude, xo, yo, sigma_x, sigma_y, theta, offset)
             theta = checked_inputs['rotation']
             offset = checked_inputs['offset']
         except KeyError as e:
-            print('Something went wrong when unpacking values from checked_inputs in gaussian_2d():{}\n\t{}'.format(
-                checked_inputs, e))
+            print(
+                'Something went wrong when unpacking values from checked_inputs in gaussian_2d():{}\n\t{}'.format(
+                    checked_inputs, e))
         try:
-            a = (np.cos(theta) ** 2) / (2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (2 * sigma_y ** 2)
-            b = -(np.sin(2 * theta)) / (4 * sigma_x ** 2) + (np.sin(2 * theta)) / (4 * sigma_y ** 2)
-            c = (np.sin(theta) ** 2) / (2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (2 * sigma_y ** 2)
-            g = offset + amplitude * np.exp(- (a * ((x_pos - xo) ** 2) + 2 * b * (x_pos - xo) * (y_pos - yo)
-                                               + c * ((y_pos - yo) ** 2)))
+            a = (np.cos(theta) ** 2) / (
+                2 * sigma_x ** 2) + (np.sin(theta) ** 2) / (
+                2 * sigma_y ** 2)
+            b = -(np.sin(2 * theta)) / (
+                4 * sigma_x ** 2) + (np.sin(2 * theta)) / (
+                4 * sigma_y ** 2)
+            c = (np.sin(theta) ** 2) / (
+                2 * sigma_x ** 2) + (np.cos(theta) ** 2) / (
+                2 * sigma_y ** 2)
+            g = offset + amplitude * np.exp(- (
+                a * ((x_pos - xo) ** 2) + 2 * b * (
+                    x_pos - xo) * (y_pos - yo)
+                + c * ((y_pos - yo) ** 2)))
             return g.ravel()
         except ValueError as e:
             print('{}'.format(
                 e))  # Value error in {}: Could not compute result, returning None. {}'.format(r'gaussian_2d()', e))
             return None
     except AssertionError as e:
-        print('Input to gaussian_2d() did not pass check: {}'.format(checked_inputs))
+        print(
+            'Input to gaussian_2d() did not pass check: {}'.format(
+                checked_inputs))
 
 
-def check_fit_gaussian_2d_to_imagesubset_inputs(image, **kwargs):
+def check_fit_gaussian_2d_to_imagesubset_inputs(image,
+                                                **kwargs):
     try:
         debug = kwargs['debug']
         assert isinstance(debug, bool), 'debug must be bool'
@@ -320,9 +369,11 @@ def check_fit_gaussian_2d_to_imagesubset_inputs(image, **kwargs):
         subset_bounds = kwargs['subset_bounds']
         try:
             assert isinstance(subset_bounds,
-                              (tuple, list)), 'if subset_bounds is not tuple or list, it must be int or float'
+                              (tuple,
+                               list)), 'if subset_bounds is not tuple or list, it must be int or float'
             try:
-                assert len(subset_bounds) == 4, 'subset_bounds must be of length 4 if it is tuple or list'
+                assert len(
+                    subset_bounds) == 4, 'subset_bounds must be of length 4 if it is tuple or list'
             except AssertionError as e:
                 subset_bounds = (0, wx, 0, wy)
                 if debug:
@@ -331,12 +382,17 @@ def check_fit_gaussian_2d_to_imagesubset_inputs(image, **kwargs):
             if debug:
                 print(e)
             try:
-                assert isinstance(subset_bounds, (int, float)), 'subset_bounds are not tuple, list, int or float'
-                subset_bounds = (int(wx / 2 - subset_bounds), int(wx / 2 + subset_bounds), int(wy / 2 - subset_bounds),
-                                 int(wy / 2 + subset_bounds))
+                assert isinstance(subset_bounds, (int,
+                                                  float)), 'subset_bounds are not tuple, list, int or float'
+                subset_bounds = (
+                    int(wx / 2 - subset_bounds),
+                    int(wx / 2 + subset_bounds),
+                    int(wy / 2 - subset_bounds),
+                    int(wy / 2 + subset_bounds))
                 try:
                     assert subset_bounds[1] > \
-                           subset_bounds[0] >= 0, 'The vertical subset bounds cannot be larger than the original frame'
+                           subset_bounds[
+                               0] >= 0, 'The vertical subset bounds cannot be larger than the original frame'
                     assert subset_bounds[3] > \
                            subset_bounds[
                                2] >= 0, 'The horizontal subset bounds cannot be larger than the original frame'
@@ -357,8 +413,10 @@ def check_fit_gaussian_2d_to_imagesubset_inputs(image, **kwargs):
 
     try:
         p0 = kwargs['p0']
-        assert isinstance(p0, (list, tuple)), 'Initial guess p0 must be list or tuple'
-        assert len(p0) == 7, 'Length of initial guess p0 must be 7'
+        assert isinstance(p0, (list,
+                               tuple)), 'Initial guess p0 must be list or tuple'
+        assert len(
+            p0) == 7, 'Length of initial guess p0 must be 7'
     except KeyError as e:
         p0 = [None] * 7
     except AssertionError as e:
@@ -370,7 +428,8 @@ def check_fit_gaussian_2d_to_imagesubset_inputs(image, **kwargs):
 
     try:
         retryfitting = kwargs['retryfitting']
-        assert isinstance(retryfitting, bool), 'retryfitting must be bool'
+        assert isinstance(retryfitting,
+                          bool), 'retryfitting must be bool'
     except KeyError as e:
         retryfitting = True
         if debug:
@@ -398,33 +457,47 @@ def check_fit_gaussian_2d_to_imagesubset_inputs(image, **kwargs):
                     'Warning in fit_gaussian_2d_to_imagesubset():\n\tNo subset bound for bound no {} provided, using default: {}\n'.format(
                         i, bounds[i]))
 
-    result = {'debug': debug, 'bounds': bounds, 'p0': p0, 'retryfitting': retryfitting}
+    result = {'debug': debug, 'bounds': bounds, 'p0': p0,
+              'retryfitting': retryfitting}
     return image, result
 
 
 def fit_gaussian_2d_to_imagesubset_fast(image, bounds=10):
     (wx, wy) = np.shape(image)
 
-    bounds = (int(wx / 2 - bounds), int(wx / 2 + bounds), int(wy / 2 - bounds),
+    bounds = (int(wx / 2 - bounds), int(wx / 2 + bounds),
+              int(wy / 2 - bounds),
               int(wy / 2 + bounds))
 
-    subset = image[bounds[0]:bounds[1] + 1, bounds[2]:bounds[3] + 1].copy()
+    subset = image[bounds[0]:bounds[1] + 1,
+             bounds[2]:bounds[3] + 1].copy()
     # fig, ax = plt.subplots(1, 1)
     # ax.imshow(subset)
     # plt.show()
-    x, y = np.mgrid[bounds[0]:bounds[1] + 1, bounds[2]:bounds[3] + 1]
+    x, y = np.mgrid[bounds[0]:bounds[1] + 1,
+           bounds[2]:bounds[3] + 1]
 
-    p0 = [subset.max(), int((bounds[1] - bounds[0]) / 2) + bounds[0], int((bounds[3] - bounds[2]) / 2) + bounds[2], 1,
+    p0 = [subset.max(),
+          int((bounds[1] - bounds[0]) / 2) + bounds[0],
+          int((bounds[3] - bounds[2]) / 2) + bounds[2], 1,
           1, 0, 0]
 
-    popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(), p0=p0,
-                           bounds=([p0[0] / 2, 0, 0, 0, 0, -45, 0], [p0[0] * 2, wx, wy, wx / 2, wy / 2, 45, np.inf]))
+    popt, pcov = curve_fit(gaussian_2d, (x, y),
+                           subset.ravel(), p0=p0,
+                           bounds=(
+                               [p0[0] / 2, 0, 0, 0, 0, -45,
+                                0],
+                               [p0[0] * 2, wx, wy, wx / 2,
+                                wy / 2, 45, np.inf]))
 
-    return popt, x, y, [bounds[0], bounds[1], bounds[2], bounds[3]], (
-        bounds[2] - 0.5, bounds[3] + 0.5, bounds[1] + 0.5, bounds[0] - 0.5)
+    return popt, x, y, [bounds[0], bounds[1], bounds[2],
+                        bounds[3]], (
+               bounds[2] - 0.5, bounds[3] + 0.5,
+               bounds[1] + 0.5, bounds[0] - 0.5)
 
 
-def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, None, None, None),
+def fit_gaussian_2d_to_imagesubset(image,
+                                   **kwargs):  # subset_bounds=(None, None, None, None),
     # p0=[None, None, None, None, None, None, None], retryfitting=True, debug=False):
     """Fit a twodimensional gaussian to part of image.
 
@@ -502,9 +575,11 @@ def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, Non
         subset_bounds = kwargs['subset_bounds']
         try:
             assert isinstance(subset_bounds,
-                              (tuple, list)), 'if subset_bounds is not tuple or list, it must be int or float'
+                              (tuple,
+                               list)), 'if subset_bounds is not tuple or list, it must be int or float'
             try:
-                assert len(subset_bounds) == 4, 'subset_bounds must be of length 4 if it is tuple or list'
+                assert len(
+                    subset_bounds) == 4, 'subset_bounds must be of length 4 if it is tuple or list'
             except AssertionError as e:
                 subset_bounds = (0, wx, 0, wy)
                 if debug:
@@ -513,12 +588,17 @@ def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, Non
             if debug:
                 print(e)
             try:
-                assert isinstance(subset_bounds, (int, float)), 'subset_bounds are not tuple, list, int or float'
-                subset_bounds = (int(wx / 2 - subset_bounds), int(wx / 2 + subset_bounds), int(wy / 2 - subset_bounds),
-                                 int(wy / 2 + subset_bounds))
+                assert isinstance(subset_bounds, (int,
+                                                  float)), 'subset_bounds are not tuple, list, int or float'
+                subset_bounds = (
+                    int(wx / 2 - subset_bounds),
+                    int(wx / 2 + subset_bounds),
+                    int(wy / 2 - subset_bounds),
+                    int(wy / 2 + subset_bounds))
                 try:
                     assert subset_bounds[1] > \
-                           subset_bounds[0] >= 0, 'The vertical subset bounds cannot be larger than the original frame'
+                           subset_bounds[
+                               0] >= 0, 'The vertical subset bounds cannot be larger than the original frame'
                     assert subset_bounds[3] > \
                            subset_bounds[
                                2] >= 0, 'The horizontal subset bounds cannot be larger than the original frame'
@@ -539,8 +619,10 @@ def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, Non
 
     try:
         p0 = kwargs['p0']
-        assert isinstance(p0, (list, tuple)), 'Initial guess p0 must be list or tuple'
-        assert len(p0) == 7, 'Length of initial guess p0 must be 7'
+        assert isinstance(p0, (list,
+                               tuple)), 'Initial guess p0 must be list or tuple'
+        assert len(
+            p0) == 7, 'Length of initial guess p0 must be 7'
     except KeyError as e:
         p0 = [None] * 7
     except AssertionError as e:
@@ -552,7 +634,8 @@ def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, Non
 
     try:
         retryfitting = kwargs['retryfitting']
-        assert isinstance(retryfitting, bool), 'retryfitting must be bool'
+        assert isinstance(retryfitting,
+                          bool), 'retryfitting must be bool'
     except KeyError as e:
         retryfitting = True
         if debug:
@@ -580,36 +663,48 @@ def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, Non
                     'Warning in fit_gaussian_2d_to_imagesubset():\n\tNo subset bound for bound no {} provided, using default: {}\n'.format(
                         i, bounds[i]))
 
-    subset = image[bounds[0]:bounds[1] + 1, bounds[2]:bounds[3] + 1].copy()
-    x, y = np.mgrid[bounds[0]:bounds[1] + 1, bounds[2]:bounds[3] + 1]
+    subset = image[bounds[0]:bounds[1] + 1,
+             bounds[2]:bounds[3] + 1].copy()
+    x, y = np.mgrid[bounds[0]:bounds[1] + 1,
+           bounds[2]:bounds[3] + 1]
 
     # print(bounds[0], bounds[1]+1, bounds[2], bounds[3]+1)
     # print(np.shape(subset), np.shape(x), x.min(), x.max())
 
     try:
-        assert x.min() == bounds[0], 'minimum of "x" ({}) is not equal to "bounds[0]" ({})'.format(x.min(), bounds[0])
+        assert x.min() == bounds[
+            0], 'minimum of "x" ({}) is not equal to "bounds[0]" ({})'.format(
+            x.min(), bounds[0])
     except AssertionError as e:
         if debug:
             print(e)
     try:
-        assert x.max() == bounds[1], 'maximum of "x" ({}) is not equal to "bounds[1]" ({})'.format(x.max(), bounds[1])
+        assert x.max() == bounds[
+            1], 'maximum of "x" ({}) is not equal to "bounds[1]" ({})'.format(
+            x.max(), bounds[1])
     except AssertionError as e:
         if debug:
             print(e)
     try:
-        assert y.min() == bounds[2], 'minimum of "y" ({}) is not equal to "bounds[2]" ({})'.format(y.min(), bounds[2])
+        assert y.min() == bounds[
+            2], 'minimum of "y" ({}) is not equal to "bounds[2]" ({})'.format(
+            y.min(), bounds[2])
     except AssertionError as e:
         if debug:
             print(e)
     try:
-        assert y.max() == bounds[3], 'maximum of "y" ({}) is not equal to "bounds[3]" ({})'.format(x.max(), bounds[3])
+        assert y.max() == bounds[
+            3], 'maximum of "y" ({}) is not equal to "bounds[3]" ({})'.format(
+            x.max(), bounds[3])
     except AssertionError as e:
         if debug:
             print(e)
 
     # print(bounds)
 
-    tmp_p0 = [subset.max(), int((bounds[1] - bounds[0]) / 2) + bounds[0], int((bounds[3] - bounds[2]) / 2) + bounds[2],
+    tmp_p0 = [subset.max(),
+              int((bounds[1] - bounds[0]) / 2) + bounds[0],
+              int((bounds[3] - bounds[2]) / 2) + bounds[2],
               1, 1, 0, 0]
 
     try:
@@ -638,45 +733,69 @@ def fit_gaussian_2d_to_imagesubset(image, **kwargs):  # subset_bounds=(None, Non
     try:
         warnings.simplefilter("error", OptimizeWarning)
         if debug:
-            print('Fitting curve. x, y has shapes {0}, {1}, while subset has shape {2}'.format(np.shape(x), np.shape(y),
-                                                                                               np.shape(subset)))
-        popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(),
-                               p0=p0, bounds=([0, 0, 0, 0, 0, -45, 0], [np.inf, wx, wy, wx, wy, 45, np.inf]))
+            print(
+                'Fitting curve. x, y has shapes {0}, {1}, while subset has shape {2}'.format(
+                    np.shape(x), np.shape(y),
+                    np.shape(subset)))
+        popt, pcov = curve_fit(gaussian_2d, (x, y),
+                               subset.ravel(),
+                               p0=p0, bounds=(
+                [0, 0, 0, 0, 0, -45, 0],
+                [np.inf, wx, wy, wx, wy, 45, np.inf]))
     except OptimizeWarning as e:
         if retryfitting:
             if debug:
                 print(
-                    'Warning in fig_gaussian_2d_to_imagesubset():\n{}\n\tTrying automated default guess {}\n'.format(e,
-                                                                                                                     tmp_p0))
+                    'Warning in fig_gaussian_2d_to_imagesubset():\n{}\n\tTrying automated default guess {}\n'.format(
+                        e,
+                        tmp_p0))
             p0 = tmp_p0
             if debug:
-                warnings.simplefilter("default", OptimizeWarning)
+                warnings.simplefilter("default",
+                                      OptimizeWarning)
             else:
-                warnings.simplefilter("ignore", OptimizeWarning)
-            popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(),
-                                   p0=p0, bounds=([0, 0, 0, 0, 0, -45, 0], [np.inf, wx, wy, wx, wy, 45, np.inf]))
+                warnings.simplefilter("ignore",
+                                      OptimizeWarning)
+            popt, pcov = curve_fit(gaussian_2d, (x, y),
+                                   subset.ravel(),
+                                   p0=p0, bounds=(
+                    [0, 0, 0, 0, 0, -45, 0],
+                    [np.inf, wx, wy, wx, wy, 45, np.inf]))
 
         else:
             if debug:
-                warnings.simplefilter("default", OptimizeWarning)
+                warnings.simplefilter("default",
+                                      OptimizeWarning)
             else:
-                warnings.simplefilter("ignore", OptimizeWarning)
-            popt, pcov = curve_fit(gaussian_2d, (x, y), subset.ravel(),
-                                   p0=p0, bounds=([0, 0, 0, 0, 0, -45, 0], [np.inf, wx, wy, wx, wy, 45, np.inf]))
+                warnings.simplefilter("ignore",
+                                      OptimizeWarning)
+            popt, pcov = curve_fit(gaussian_2d, (x, y),
+                                   subset.ravel(),
+                                   p0=p0, bounds=(
+                    [0, 0, 0, 0, 0, -45, 0],
+                    [np.inf, wx, wy, wx, wy, 45, np.inf]))
     except RuntimeError as e:
         if debug:
             print(e)
         popt, pcov = [0] * 7, np.zeros((7, 7))
     if np.any(pcov == np.inf):
         if debug:
-            print('\tFit using guess: {} failed (retryfitting {}.'.format(p0, retryfitting))
-        perr = [np.inf, np.inf, np.inf, np.inf, np.inf, np.inf, np.inf]
+            print(
+                '\tFit using guess: {} failed (retryfitting {}.'.format(
+                    p0, retryfitting))
+        perr = [np.inf, np.inf, np.inf, np.inf, np.inf,
+                np.inf, np.inf]
     else:
         perr = np.sqrt(np.diag(pcov))
-    return {'parameters': popt, 'parameter uncertainties': perr, 'x': x, 'y': y,
-            'bounds': [bounds[0], bounds[1], bounds[2], bounds[3]], 'x min': bounds[0], 'x max': bounds[1],
-            'y min': bounds[2], 'y max': bounds[3], 'extent': (bounds[2] - 0.5, bounds[3] + 0.5, bounds[1] + 0.5,
-                                                               bounds[0] - 0.5)}
+    return {'parameters': popt,
+            'parameter uncertainties': perr, 'x': x, 'y': y,
+            'bounds': [bounds[0], bounds[1], bounds[2],
+                       bounds[3]], 'x min': bounds[0],
+            'x max': bounds[1],
+            'y min': bounds[2], 'y max': bounds[3],
+            'extent': (bounds[2] - 0.5, bounds[3] + 0.5,
+                       bounds[1] + 0.5,
+                       bounds[0] - 0.5)}
 
 
 def add_contour(x, y, z, axis, number_of_contours=3):
@@ -745,16 +864,20 @@ def align_stack(stack, **kwargs):
 
     for frameno, frame in enumerate(stack):
         if print_frameno:
-            print('Handling frame {}: row {}, column {}'.format(frameno, rowno, colno))
+            print(
+                'Handling frame {}: row {}, column {}'.format(
+                    frameno, rowno, colno))
             # print(np.shape(frame.data))
 
         if colno == n_cols:
             colno = 0
             rowno += 1
 
-        fit_result = fit_gaussian_2d_to_imagesubset_fast(frame.data, **kwargs)
+        fit_result = fit_gaussian_2d_to_imagesubset_fast(
+            frame.data, **kwargs)
         Popt[rowno, colno, :] = fit_result['parameters']
-        Perr[rowno, colno, :] = fit_result['parameter uncertainties']
+        Perr[rowno, colno, :] = fit_result[
+            'parameter uncertainties']
         if debug:
             print(fit_result['parameters'])
         colno += 1
@@ -776,20 +899,29 @@ def align_stack(stack, **kwargs):
             #     interpolation='nearest', extent=fit_result['extent'])
             # add_contour(fit_result['x'], fit_result['y'], g_2, ax[1])
             # plt.show()
-            return {'Popt': Popt[:rowno + 1, :colno + 1, :], 'Perr': Perr[:rowno + 1, :colno + 1, :],
-                    'x': fit_result['x'], 'y': fit_result['y'], 'extent': fit_result['extent']}
+            return {'Popt': Popt[:rowno + 1, :colno + 1, :],
+                    'Perr': Perr[:rowno + 1, :colno + 1, :],
+                    'x': fit_result['x'],
+                    'y': fit_result['y'],
+                    'extent': fit_result['extent']}
 
     f, ax = plt.subplots(1, 2)
     ax[0].imshow(frame.data, interpolation='nearest')
     # print('Bounds (final frame): {}, {}, {}, {}, {}'.format(fit_result['x min'], fit_result['x max']+1, fit_result['y min'], fit_result['y max']+1))
-    ax[1].imshow(frame.data[fit_result['x min']:fit_result['x max'] + 1, fit_result['y min']:fit_result['y max'] + 1],
+    ax[1].imshow(frame.data[fit_result['x min']:fit_result[
+                                                    'x max'] + 1,
+                 fit_result['y min']:fit_result[
+                                         'y max'] + 1],
                  interpolation='nearest')
     plt.show()
 
-    return {'Popt': Popt, 'Perr': Perr, 'x': fit_result['x'], 'y': fit_result['y'], 'extent': fit_result['extent']}
+    return {'Popt': Popt, 'Perr': Perr,
+            'x': fit_result['x'], 'y': fit_result['y'],
+            'extent': fit_result['extent']}
 
 
-def align_stack_fast(stack, limit=400, bounds=10, save=False):
+def align_stack_fast(stack, limit=400, bounds=10,
+                     save=False):
     """
     Align a stack of diffraction patterns
 
@@ -813,11 +945,18 @@ def align_stack_fast(stack, limit=400, bounds=10, save=False):
     if limit is None:
         limit = n_tot
 
+    ndx = stack.axes_manager['dx'].get('size')['size']
+    ndy = stack.axes_manager['dy'].get('size')['size']
+
+    dx, dy = np.mgrid[0:ndx, 0:ndy]
+
     # print(n_cols, n_rows)
 
     Popt = np.zeros((n_tot, 7))
     Popt_2 = np.zeros((n_rows, n_cols, 7))
     Perr = np.zeros((n_tot, 7))
+    G = np.zeros((n_rows, n_cols, ndx, ndy))
+
     rowno = 0
     colno = 0
 
@@ -826,21 +965,74 @@ def align_stack_fast(stack, limit=400, bounds=10, save=False):
             colno = 0
             rowno += 1
         if not frameno % (int(limit / 100)):
-            print('{}% done (now on Frame {} of {}: row {}, col {})'.format(int(frameno / limit * 100), frameno, limit, rowno, colno))
+            print(
+                '{}% done (now on Frame {} of {}: row {}, col {})'.format(
+                    int(frameno / limit * 100), frameno,
+                    limit, rowno, colno))
 
         try:
-            fit_popt, fit_x, fit_y, fit_bounds, fit_extent = fit_gaussian_2d_to_imagesubset_fast(frame.data, bounds)
+            fit_popt, fit_x, fit_y, fit_bounds, fit_extent = fit_gaussian_2d_to_imagesubset_fast(
+                frame.data, bounds)
         except RuntimeError as e:
             if save:
                 np.save('Popts_1', Popt)
                 np.save('Popts_2', Popt_2)
+                np.save('G', G)
             print(e)
         Popt[frameno, :] = fit_popt
         Popt_2[rowno, colno, :] = fit_popt
+        G[rowno, colno, :, :] = gaussian_2d_fast((dx, dy),
+                                                 *fit_popt).reshape(
+            np.shape(dx))
         colno += 1
 
         if frameno == limit or frameno == n_tot - 1:
             if save:
                 np.save('Popts_1', Popt)
                 np.save('Popts_2', Popt_2)
-            return Popt, Popt_2[:, :, :]
+                np.save('G', G)
+            return Popt, Popt_2[:, :, :], G
+
+
+def shift(xy):
+    global Popts_1, frameno
+    return xy - np.array([72 - Popts_1[frameno, 1], 72 - Popts_1[frameno, 2]])[None, :]
+
+def align_stack(stack, popts, limit=None):
+    n_cols = stack.axes_manager['x'].get('size')['size']
+    n_rows = stack.axes_manager['y'].get('size')['size']
+
+    n_total = n_cols * n_rows
+
+    if limit is None:
+        limit = n_total
+
+    n_dcols = stack.axes_manager['dx'].get('size')['size']
+    n_drows = stack.axes_manager['dy'].get('size')['size']
+
+    new_stack = np.zeros((n_rows, n_cols, n_drows, n_dcols), dtype=np.uint8)
+
+    colno = 0
+    rowno = 0
+
+    for frameno, frame in enumerate(s):
+        global frameno
+        if frameno == limit:
+            break
+        if colno == n_cols:
+            colno = 0
+            rowno += 1
+        if not frameno % (int(limit / 100)):
+            print(
+                '{}% done (now on Frame {} of {}: row {}, col {})'.format(
+                    int(frameno / limit * 100), frameno,
+                    limit, rowno, colno))
+
+        image = frame.data.copy()
+
+        coords = warp_coords(shift, image.shape)
+        new_stack[rowno, colno, :, :] = map_coordinates(image, coords)
+
+        colno += 1
+    s_shifted = hs.signals.Signal2D(new_stack)
+    return s_shifted
