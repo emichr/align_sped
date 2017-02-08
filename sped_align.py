@@ -292,7 +292,7 @@ def align_stack_fast(stack, limit=None, bounds=10,
 
         except RuntimeError as e:
             g = hs.signals.Signal2D(G)
-            g.metadata = stack.original_metadata.deepcopy()
+            g.metadata = stack.metadata.deepcopy()
             g.axes_manager = stack.axes_manager.copy()
             new_metadata = {'Postprocessing': {
                 'date': dt.datetime.now().strftime('%c'),
@@ -312,7 +312,7 @@ def align_stack_fast(stack, limit=None, bounds=10,
                 'type': 'aligned stack', 'limit': limit, 'save': save,
                 'savedirectory': savedir, 'name': name,
                 'time elapsed': times[-1]}}
-            g.metadata.add_dictionary(new_metadata)
+            aligned_stack.metadata.add_dictionary(new_metadata)
 
             if save:
                 np.save(savedir + 'Popts_1', Popt)
@@ -334,19 +334,21 @@ def align_stack_fast(stack, limit=None, bounds=10,
 
         if frameno == limit or frameno == n_tot - 1:
             g = hs.signals.Signal2D(G)
-            g.metadata = stack.original_metadata.deepcopy()
+            g.metadata = stack.metadata.deepcopy()
+            #print('Stack metadata:\n', stack.metadata)
+            #print('G metadata (deepcopied):\n', g.metadata)
             g.axes_manager = stack.axes_manager.copy()
-            new_metadata = {'Test': {'test1': 1, 'test2': 2}}
-            # new_metadata = {'Postprocessing': {
-            #     'date': dt.datetime.now().strftime('%c'),
-            #     'version': 'latest',
-            #     'type': 'Gaussian fit',
-            #     'limit': limit,
-            #     'save': save,
-            #     'savedirectory': savedir,
-            #     'name': name,
-            #     'time elapsed': times[-1]}}
+            new_metadata = {'Postprocessing': {
+                'date': dt.datetime.now().strftime('%c'),
+                'version': 'latest',
+                'type': 'Gaussian fit',
+                'limit': limit,
+                'save': save,
+                'savedirectory': savedir,
+                'name': name,
+                'time elapsed': times[-1]}}
             g.metadata.add_dictionary(new_metadata)
+            #print('G metadata (added dict):\n',g.metadata)
 
             aligned_stack = hs.signals.Signal2D(shifted_stack)
             aligned_stack.metadata = stack.metadata.deepcopy()
